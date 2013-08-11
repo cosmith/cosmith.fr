@@ -1,0 +1,42 @@
+.page {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 50px 80px;
+}
+
+body {
+    background: url("cream_dust.png"); /* courtesy of subtlepatterns.com */
+    color: #333;
+    font-family: open-sans, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+h2 {
+    font-size: 1.1em;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+    border-bottom: 1px dotted #ccc;
+}
+
+a:hover {
+    color: #000;
+}
+
+.text {
+    display: inline-block;
+}
+
+/* d3 lines */
+svg {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+
+.line {
+    fill: none;
+    stroke: rgba(50, 0, 100, 0.05);
+    stroke-width: 1px;
+}

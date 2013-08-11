@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<!-- saved from url=(0065)file:///C:/Users/Corentin/AppData/Local/Temp/fz3temp-1/index.html -->
+<html lang="en-US" class="wf-opensans-n4-active wf-opensans-n7-active wf-opensans-i4-active wf-opensans-i7-active wf-active"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta charset="UTF-8">
+	<title>Corentin Smith</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="http://use.edgefonts.net/c/86eb9a/open-sans:n4:n7:i4:i7.VvH:F:2,Vv8:F:2,VvD:F:2,Vv9:F:2/d"><script type="text/javascript" async="" src="./index_files/ga.js"></script><script src="./index_files/open-sans.js"></script>
+
+    <meta description="Corentin Smith Ecole Centrale Paris">
+</head>
+<body>
+    <div class="background"></div>
+
+    <div class="page">
+        <h1 class="text">Corentin Smith</h1>
+        <h2 class="text">Hi! I'm a student at <a href="http://www.ecp.fr/">École Centrale Paris</a>, 
+        currently working at <a href="http://www.freshplanet.com">FreshPlanet</a> in NYC.</h2>
+
+        <p class="text">
+            I love music, graphic design, and programming. <br>
+            You can learn more about me on <a href="http://fr.linkedin.com/in/corentinsmith/">LinkedIn</a>, <a href="http://github.com/cosmith">Github</a> or <a href="https://twitter.com/CorentinSmith">Twitter</a>.
+        </p>
+
+        <p class="text">
+          You can also find my resume here in <a href="resume-corentin-smith-en.pdf">English</a> or in <a href="cv-corentin-smith-fr.pdf">French</a>.
+        </p>
+    </div>
+</body>
+
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/d3/3.2.2/d3.v3.min.js"></script>
+    <script type="text/javascript">
+    // Sorry if I made your browser hang :(
+    // I like to play with d3...
+
+    var data = [];
+    // select a random scale in [50, 200]
+    var scale = 50 + Math.random() * 150;
+    // select a random interpolation method
+    var interpolation = ["basis", "linear", "step-after"][Math.floor(Math.random() * 3)];
+    var x = 0,
+        y = 0;
+
+    var svg = d3.select(".background").append("svg")
+        .attr("width", "100%")
+        .attr("height", "100%");
+
+    var text = d3.selectAll(".text");
+    var dims = [];
+    text.each(function (d, i) {
+        dims.push(text[0][i].getBoundingClientRect());
+    });
+
+    var line = d3.svg.line()
+        .x(function (d) { return d.x; })
+        .y(function (d) { return d.y; })
+        .interpolate(interpolation);
+
+    svg.append("path")
+        .attr("class", "line")
+        .attr("d", line(data));
+
+    function update() {
+        generateData(10);
+
+        var path = svg.selectAll(".line")
+            .data([data])
+            .attr("d", line);
+
+        // update existing
+        path.attr("class", "line");
+
+        // enter
+        path.enter()
+            .append("path")
+            .data(data)
+            .attr("class", "line")
+            .attr("d", line);
+
+        // enter + update
+        path.transition()
+            .ease("linear")
+            .duration(200)
+            .attr("d", line);
+    }
+
+    // is the path over the text?
+    function overText(x, y) {
+        var over = false;
+        var margin = 30;
+        for (var i = 0; i < dims.length; i++) {
+            over = over ||
+                (x > dims[i].left - margin &&
+                 x < dims[i].right + margin &&
+                 y > dims[i].top - margin &&
+                 y < dims[i].bottom + margin);
+        }
+        // fuzzy borders
+        over = over && Math.random() > 0.25;
+        return over;
+    }
+
+    function rand(init, max) {
+        var newval = (0.5 - Math.random()) * scale;
+        newval = Math.max(-scale, Math.min(init + newval, max));
+        
+        return newval;
+    }
+
+    function generateData(count) {
+        for (var i = count; i > 0; --i) {
+            pushData();
+        }
+    }
+
+    function pushData() {
+        var newX = rand(x, document.width);
+        var newY = rand(y, document.height);
+
+        while (overText(newX, newY)) {
+            newX = rand(x, document.width);
+            newY = rand(y, document.height);
+        }
+        x = newX;
+        y = newY;
+
+        data.push({x: x, y: y});
+    }
+
+    generateData(2000);
+    setInterval(update, 100);
+
+    </script>
+
+    <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-35985771-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>
+</html>
