@@ -14,8 +14,6 @@
 </head>
 
 <body>
-    <div class="background"></div>
-
     <div class="page">
         <h1 class="text">Corentin Smith</h1>
         <h2 class="text">Hi! I'm a student at <a href="http://www.ecp.fr/">École Centrale Paris</a>, 
@@ -30,12 +28,16 @@
           You can also find my resume here in <a href="resume-corentin-smith-en.pdf">English</a> or in <a href="cv-corentin-smith-fr.pdf">French</a>.
         </p>
     </div>
+
+    <div class="background"></div>
 </body>
 
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/d3/3.2.2/d3.v3.min.js"></script>
     <script type="text/javascript">
-    // Sorry if I made your browser hang :(
+    // Sorry if I made your browser slow :(
     // I like to play with d3...
+
+    ;(function() {
 
     var data = [];
     // select a random scale in [50, 200]
@@ -133,6 +135,8 @@
 
     generateData(2000);
     update();
+
+    })();
     </script>
 
     <script type="text/javascript">

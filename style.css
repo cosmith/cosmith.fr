@@ -1,7 +1,8 @@
 .page {
-    max-width: 860px;
+    max-width: 820px;
     margin: 0 auto;
     padding: 50px 80px;
+    z-index: 1000;
 }
 
 body {
@@ -29,6 +30,10 @@ a:hover {
 }
 
 /* d3 lines */
+.background {
+    z-index: 0;    
+}
+
 svg {
     position: absolute;
     bottom: 0;
