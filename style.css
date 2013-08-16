@@ -2,7 +2,7 @@
     max-width: 820px;
     margin: 0 auto;
     padding: 50px 80px;
-    z-index: 1000;
+    z-index: 10;
 }
 
 body {
@@ -38,10 +38,11 @@ svg {
     position: absolute;
     bottom: 0;
     left: 0;
+    z-index: -10;
 }
 
 .line {
     fill: none;
-    stroke: rgba(50, 0, 100, 0.05);
+    stroke: rgba(50, 0, 100, 0.07);
     stroke-width: 1px;
 }
