@@ -25,10 +25,6 @@ a:hover {
     color: #000;
 }
 
-.text {
-    display: inline-block;
-}
-
 /* d3 lines */
 .background {
     z-index: 0;    
