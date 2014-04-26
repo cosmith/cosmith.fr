@@ -30,8 +30,6 @@ text.each(function (d, i) {
     dims.push(text[0][i].getBoundingClientRect());
 });
 
-console.log(dims)
-
 var line = d3.svg.line()
     .x(function (d) { return d.x; })
     .y(function (d) { return d.y; })
