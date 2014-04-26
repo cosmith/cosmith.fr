@@ -6,7 +6,7 @@
 }
 
 body {
-    background: url("cream_dust.png"); /* courtesy of subtlepatterns.com */
+    background: url("../img/cream_dust.png"); /* courtesy of subtlepatterns.com */
     color: #333;
     font-family: "proxima-nova", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
@@ -26,6 +26,12 @@ a:hover {
 }
 
 /* d3 lines */
+.text {
+    display: inline-block;
+    margin: 10px;
+    padding: 0 30px;
+}
+
 .background {
     z-index: 0;    
 }
