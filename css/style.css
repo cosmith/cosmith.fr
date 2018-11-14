@@ -11,6 +11,11 @@ body {
     font-family: "proxima-nova", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
+::selection {
+    background: #fffb00;
+    color: #071e67;
+}
+
 h2 {
     font-size: 1.1em;
 }
