@@ -1,56 +1,73 @@
 .page {
-    max-width: 820px;
-    margin: 0 auto;
-    padding: 50px 80px;
-    z-index: 10;
+  max-width: 820px;
+  margin: 0 auto;
+  padding-top: 50px;
+  z-index: 10;
+}
+
+html {
+  font-size: 18px;
+}
+
+@media (max-width: 600px) {
+  html {
+    font-size: 4vw;
+  }
 }
 
 body {
-    background: url("../img/cream_dust.png"); /* courtesy of subtlepatterns.com */
-    color: #333;
-    font-family: "proxima-nova", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  background: url("../img/cream_dust.png"); /* courtesy of subtlepatterns.com */
+  color: #333;
+  font-family: "proxima-nova", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 ::selection {
-    background: #fffb00;
-    color: #071e67;
+  background: #fffb00;
+  color: #071e67;
 }
 
-h2 {
-    font-size: 1.1em;
+h1.text {
+  font-size: 1.5rem;
+}
+
+h2.text {
+  font-size: 1.2rem;
+}
+
+p.text {
+  font-size: 1rem;
 }
 
 a {
-    text-decoration: none;
-    color: inherit;
-    border-bottom: 1px dotted #ccc;
+  text-decoration: none;
+  color: inherit;
+  border-bottom: 1px dotted #ccc;
 }
 
 a:hover {
-    color: #000;
+  color: #000;
 }
 
 /* d3 lines */
 .text {
-    display: inline-block;
-    margin: 10px;
-    padding: 0 30px;
-    min-width: 500px;
+  display: inline-block;
+  margin: 10px;
+  padding: 0 30px;
 }
 
-.background {
-    z-index: 0;    
+#background {
+  z-index: 0;
 }
 
 svg {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    z-index: -10;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  z-index: -10;
 }
 
 .line {
-    fill: none;
-    stroke: rgba(50, 0, 100, 0.07);
-    stroke-width: 1px;
+  fill: none;
+  stroke: rgba(50, 0, 100, 0.07);
+  stroke-width: 1px;
 }
