@@ -1,16 +1,11 @@
-import json
+import markdown
 import os
 import re
 import shutil
 import sys
-from functools import cache
 
-from jinja2 import Environment, PackageLoader, select_autoescape
 
-TEMPLATE_DIR = "./templates"
-DATA_DIR = "./data"
-
-jinja_env = Environment(loader=PackageLoader("build"), autoescape=select_autoescape())
+PAGES_DIR = "./pages"
 
 
 if __name__ == "__main__":
@@ -29,31 +24,21 @@ if __name__ == "__main__":
     os.makedirs("build")
     shutil.copytree("css", "build/css")
 
-    # load templates and data
+    # load pages
     pages = {}
 
-    for filename in os.listdir(TEMPLATE_DIR):
-        if ".html" in filename:
-            pagename = filename.split(".")[0]
-            pages[pagename] = {"template": filename, "data": None}
+    for filename in os.listdir(PAGES_DIR):
+        if ".md" not in filename:
+            continue
 
-    for filename in os.listdir(DATA_DIR):
-        if ".json" in filename:
-            pagename = filename.split(".")[0]
-            pages[pagename]["data"] = os.path.join(DATA_DIR, filename)
-
-    for pagename, page in pages.items():
+        pagename = filename.split(".")[0]
         print(f"rendering {pagename}")
-        template = jinja_env.get_template(page["template"])
 
-        if page["data"]:
-            with open(page["data"]) as f:
-                data = json.load(f)
-                rendered = template.render(**data)
-        else:
-            rendered = template.render()
+        with open(os.path.join(PAGES_DIR, filename)) as f:
+            md = f.read()
+        html = markdown.markdown(md)
 
-        full_page = layout.format(page=rendered)
+        full_page = layout.format(page=html)
 
         with open(f"build/{pagename}.html", "w") as f:
             f.write(full_page)
