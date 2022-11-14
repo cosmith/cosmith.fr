@@ -1,42 +1,59 @@
 import json
 import os
+import re
 import shutil
+import sys
 from functools import cache
 
+from jinja2 import Environment, PackageLoader, select_autoescape
 
-@cache
-def get_page(filename):
-    with open(f"./pages/{filename}.html") as f:
-        return f.read()
+TEMPLATE_DIR = "./templates"
+DATA_DIR = "./data"
 
-@cache
-def get_component(filename):
-    with open(f"./components/{filename}.html") as f:
-        return f.read()
+jinja_env = Environment(loader=PackageLoader("build"), autoescape=select_autoescape())
 
-@cache
-def get_data(filename):
-    with open(f"./data/{filename}.json") as f:
-        return json.load(f)
 
-with open("index.html", "r") as index:
-    text = index.read()
+if __name__ == "__main__":
+    dev = len(sys.argv) > 1 and sys.argv[1] == "dev"
 
-shutil.rmtree("build")
-os.makedirs("build")
-shutil.copytree("css", "build/css")
-for pagename in ["about", "links"]:
-    page = get_page(pagename)
-    
-    if pagename == "links":
-        link_component = get_component("link")
-        links_data = get_data("links")
-        print((links_data[0]))
-        links = [link_component.format(**link) for link in links_data]
-        links_html = "\n".join(links)
-        page = page.format(links=links_html)
+    with open("index.html", "r") as f:
+        layout = f.read()
 
-    out = text.format(page=page)
+        if dev:
+            layout = re.sub(
+                r'href="\./([a-z]+)"', r'href="./\1.html"', layout, re.MULTILINE
+            )
 
-    with open(f"build/{pagename}.html", "w") as f:
-        f.write(out)
+    # create build directory
+    shutil.rmtree("build")
+    os.makedirs("build")
+    shutil.copytree("css", "build/css")
+
+    # load templates and data
+    pages = {}
+
+    for filename in os.listdir(TEMPLATE_DIR):
+        if ".html" in filename:
+            pagename = filename.split(".")[0]
+            pages[pagename] = {"template": filename, "data": None}
+
+    for filename in os.listdir(DATA_DIR):
+        if ".json" in filename:
+            pagename = filename.split(".")[0]
+            pages[pagename]["data"] = os.path.join(DATA_DIR, filename)
+
+    for pagename, page in pages.items():
+        print(f"rendering {pagename}")
+        template = jinja_env.get_template(page["template"])
+
+        if page["data"]:
+            with open(page["data"]) as f:
+                data = json.load(f)
+                rendered = template.render(**data)
+        else:
+            rendered = template.render()
+
+        full_page = layout.format(page=rendered)
+
+        with open(f"build/{pagename}.html", "w") as f:
+            f.write(full_page)

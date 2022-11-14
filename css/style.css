@@ -74,3 +74,13 @@ a:hover {
   z-index: 10;
   padding: 10px;
 }
+
+
+/* tags */
+.tag {
+  background: rgb(109, 136, 168);
+  font-size: 0.8rem;
+  padding: 3px 6px;
+  border-radius: 5px;
+  color: white;
+}

@@ -1,0 +1,20 @@
+<p>
+  I read a lot of things on the internet. Here are some of the ones I find
+  myself coming back to (in no particular order). 
+</p>
+<!-- from:@Corentin Smith has:link -figma -github -linear -metabaseapp -notion -datadoghq -google -dashdoc -hubspot -spotify -zoom -->
+<p>
+    <ul>
+         {% for link in links %}
+         <li>
+          <a href="{{ link.url }}">{{ link.title }}</a>
+          <p>{{ link.comment }}</p>
+          <p>
+            {% for tag in link.tags %}
+              <span class="tag">{{ tag }}</span>
+            {% endfor %}
+          </p>
+        </li>
+         {% endfor %}
+    </ul>
+</p>
