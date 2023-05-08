@@ -1,11 +1,11 @@
 # Links
 
-I read a lot of things on the internet. Here are some of the ones I find myself coming back to (in no particular order). 
+I spend too much time reading articles. Here are some of the ones I find myself coming back to (in no particular order).
 <!-- from:@Corentin Smith has:link -figma -github -linear -metabaseapp -notion -datadoghq -google -dashdoc -hubspot -spotify -zoom -->
 
 ##### [The SaaS org chart by David Sacks](https://sacks.substack.com/p/the-saas-org-chart)  
 
-It's not easy to find good information about the typical setups of SaaS companies.
+Some not so easy to find information about the typical setups of SaaS companies by stage.
 
 ##### [Gitlab's handbook](https://about.gitlab.com/handbook/) 
 
