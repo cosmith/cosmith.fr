@@ -21,10 +21,14 @@ h1, h2, h3 {
   margin-block-start: 0;
 }
 h1 {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
 }
 h2 {
-  font-size: 1.05rem;
+  font-size: 1.1rem;
+}
+h3 {
+  font-size: 1.0rem;
+  margin-bottom: 0;
 }
 p {
   font-size: 1rem;
@@ -76,11 +80,9 @@ a:hover {
 }
 
 
-/* tags */
-.tag {
-  background: rgb(109, 136, 168);
-  font-size: 0.8rem;
-  padding: 3px 6px;
-  border-radius: 5px;
-  color: white;
+blockquote {
+  margin-left: 0;
+  border-left: 6px solid lightgrey;
+  background: hsl(228.77deg 35.72% 87.77% / 36%);
+  padding: 0.1rem 1rem 0.1rem 1rem;
 }

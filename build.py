@@ -4,25 +4,12 @@ import os
 import re
 import shutil
 import socketserver
-import threading
 import markdown
-from watchdog.events import FileSystemEventHandler
-from watchdog.observers import Observer
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 BUILD_DIR = os.path.join(ROOT_DIR, "build")
 SOURCE_DIR = os.path.join(ROOT_DIR, "src")
 PAGES_DIR = os.path.join(SOURCE_DIR, "pages")
-
-
-class ReloadHandler(FileSystemEventHandler):
-    def on_any_event(self, event):
-        if not event.is_directory and event.src_path.endswith(
-            (".md", "index.html", "css")
-        ):
-            print("\nDetected changes, rebuilding website...")
-            layout = load_layout(args.dev)
-            build_website(layout)
 
 
 def load_layout(dev_mode=False):
@@ -74,24 +61,6 @@ def serve_website(port=8000):
             print("\nShutting down the server...")
 
 
-def watch_for_changes(port=8000):
-    event_handler = ReloadHandler()
-    observer = Observer()
-    observer.schedule(event_handler, PAGES_DIR, recursive=True)
-    observer.schedule(event_handler, ".", recursive=False)
-    observer.start()
-
-    try:
-        server_thread = threading.Thread(target=serve_website, args=(port,))
-        server_thread.start()
-        server_thread.join()
-    except KeyboardInterrupt:
-        print("\nShutting down the file watcher and server...")
-    finally:
-        observer.stop()
-        observer.join()
-
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Build and serve a static website with live reloading."
@@ -113,4 +82,4 @@ if __name__ == "__main__":
     build_website(layout)
 
     if args.serve:
-        watch_for_changes(args.port)
+        serve_website(args.port)
