@@ -7,7 +7,7 @@ import socketserver
 import markdown
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-BUILD_DIR = os.path.join(ROOT_DIR, "build")
+BUILD_DIR = os.path.join(ROOT_DIR, "docs")
 SOURCE_DIR = os.path.join(ROOT_DIR, "src")
 PAGES_DIR = os.path.join(SOURCE_DIR, "pages")
 
