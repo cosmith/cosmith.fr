@@ -1,3 +1,3 @@
-[cosmith.fr](https://www.cosmith.fr)
+[cosmith.fr](https://cosmith.fr)
 =============================
 Personal website 
