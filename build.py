@@ -10,51 +10,71 @@ ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 BUILD_DIR = os.path.join(ROOT_DIR, "build")
 SOURCE_DIR = os.path.join(ROOT_DIR, "src")
 PAGES_DIR = os.path.join(SOURCE_DIR, "pages")
+STATIC_DIRS = ["css", "img"]
 
 
 def load_layout(dev_mode=False):
     with open(os.path.join(SOURCE_DIR, "index.html"), "r") as f:
         layout = f.read()
 
-        if dev_mode:
-            layout = re.sub(
-                r'href="\./([a-z]+)"', r'href="./\1.html"', layout, re.MULTILINE
-            )
     return layout
 
 
 def build_website(layout):
     shutil.rmtree(BUILD_DIR, ignore_errors=True)
-    os.makedirs(BUILD_DIR)
-    shutil.copytree(os.path.join(SOURCE_DIR, "css"), os.path.join(BUILD_DIR, "css"))
 
-    for filename in os.listdir(PAGES_DIR):
-        if not filename.endswith(".md"):
-            continue
+    # copy static files
+    for static_dir in STATIC_DIRS:
+        shutil.copytree(
+            os.path.join(SOURCE_DIR, static_dir), os.path.join(BUILD_DIR, static_dir)
+        )
 
-        pagename, _ = os.path.splitext(filename)
-        print(f"rendering {pagename}")
+    for root, dirs, files in os.walk(PAGES_DIR):
+        # create subdirectories in build folder
+        for subdir in dirs:
+            os.makedirs(os.path.join(BUILD_DIR, subdir), exist_ok=True)
 
-        with open(os.path.join(PAGES_DIR, filename)) as f:
-            md = f.read()
-        html = markdown.markdown(md)
+        for file in files:
+            if not file.endswith(".md"):
+                continue
 
-        full_page = layout.format(page=html)
-        html_path = os.path.join(BUILD_DIR, f"{pagename}.html")
-        with open(html_path, "w") as f:
-            f.write(full_page)
+            print(f"rendering {file}")
+            with open(os.path.join(root, file)) as f:
+                md = f.read()
+            html = markdown.markdown(md)
+            full_page = layout.format(page=html)
+            html_path = os.path.join(
+                BUILD_DIR,
+                root.replace(PAGES_DIR, "").lstrip(os.sep),
+                f"{os.path.splitext(file)[0]}.html",
+            )
+            with open(html_path, "w") as f:
+                f.write(full_page)
+
+
+class RewriteUrlsHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
+    def do_GET(self):
+        # Rewrite the URL for .html files.
+        if self.path.endswith("/"):
+            self.path += "index.html"
+        elif not any(
+            self.path.endswith(x)
+            for x in [".html", ".js", ".css", ".png", ".jpg", ".jpeg", ".gif"]
+        ):
+            self.path += ".html"
+        return http.server.SimpleHTTPRequestHandler.do_GET(self)
 
 
 def serve_website(port=8000):
     os.chdir(BUILD_DIR)
-    handler = http.server.SimpleHTTPRequestHandler
+    handler = RewriteUrlsHTTPRequestHandler
 
     with socketserver.TCPServer(("", port), handler, bind_and_activate=False) as httpd:
         httpd.allow_reuse_address = True
         httpd.server_bind()
         httpd.server_activate()
 
-        print(f"Serving on port {port} from {BUILD_DIR}")
+        print(f"Serving on http://localhost:{port}/ from {BUILD_DIR}")
         try:
             httpd.serve_forever()
         except KeyboardInterrupt:
