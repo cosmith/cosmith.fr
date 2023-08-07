@@ -12,7 +12,7 @@ A simple, easy project to get back to electronics!
 
 - A Raspberry Pi Pico
 - 2 LEDs + resistors
-- An RTC clock module
+- An DS3231 RTC clock module
 - A plywood enclosure
 
 ## Electronics
