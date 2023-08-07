@@ -4,7 +4,7 @@ Books that I either read or plan to read someday... the list is a work in progre
 
 ## Startups
 
-- [Skunk Works](https://www.amazon.com/dp/0751515035), Ben R. Rich and Leo Janos
+- ⭐️ [Skunk Works](https://www.amazon.com/dp/0751515035), Ben R. Rich and Leo Janos
 - ⭐️ [The Making of Prince of Persia](https://www.amazon.com/dp/0578627310), Jordan Mechner
 - ⭐️ [Masters of Doom](https://www.amazon.com/dp/0812972155), David Kushner
 - [Zero to One](https://www.amazon.com/dp/0804139296), Peter Thiel
@@ -47,6 +47,7 @@ Books that I either read or plan to read someday... the list is a work in progre
 
 ## Fiction
 
+- ⭐️ [Silo](https://www.amazon.com/dp/1476735115), Hugh Howey
 - ⭐️ [Dune](https://www.amazon.com/dp/0441172717), Frank Herbert
 - [The Martian](https://www.amazon.com/dp/0553418025), Andy Weir
 - [Project Hail Mary](https://www.amazon.com/dp/0593135202), Andy Weir
