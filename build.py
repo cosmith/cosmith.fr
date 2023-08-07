@@ -41,7 +41,7 @@ def build_website(layout):
             print(f"rendering {file}")
             with open(os.path.join(root, file)) as f:
                 md = f.read()
-            html = markdown.markdown(md)
+            html = markdown.markdown(md, extensions=["fenced_code", "codehilite"])
             full_page = layout.format(page=html)
             html_path = os.path.join(
                 BUILD_DIR,
