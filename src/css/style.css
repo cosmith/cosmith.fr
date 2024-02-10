@@ -36,7 +36,7 @@ p {
 }
 
 /* links */
-a {
+a:not(:has(> img)) {
   text-decoration: none;
   color: inherit;
   border-bottom: 1px dotted #ccc;

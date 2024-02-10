@@ -1,6 +1,6 @@
 # Bookshelf
 
-Books that I either read or plan to read someday... the list is a work in progress.
+Books that I read and liked!
 
 ## Startups
 
@@ -13,6 +13,7 @@ Books that I either read or plan to read someday... the list is a work in progre
 
 ## Engineering
 
+- ⭐️ [Tidy First?](https://www.amazon.com/dp/1098151240), Kent Beck
 - [A Philosophy of Software Design](https://www.amazon.com/dp/173210221X), John Ousterhout
 - [Living Documentation](https://www.amazon.com/dp/0134689321), Cyrille Martraire
 
@@ -47,6 +48,7 @@ Books that I either read or plan to read someday... the list is a work in progre
 
 ## Fiction
 
+- [The Poppy War](https://www.amazon.com/dp/0062662589), R.F. Kuang
 - ⭐️ [Silo](https://www.amazon.com/dp/1476735115), Hugh Howey
 - ⭐️ [Dune](https://www.amazon.com/dp/0441172717), Frank Herbert
 - [The Martian](https://www.amazon.com/dp/0553418025), Andy Weir
