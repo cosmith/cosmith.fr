@@ -24,7 +24,7 @@ We don't have a jointer but we do have a planer so we used the following method 
 
 ![planing](/img/projects/table/planing.jpg)
 
-The next problem is joining the boards together. Without the joiner, it's not easy to get a square edge. The track saw is not precise enough to have a good 90° angle. So we finally bought a table saw!
+The next problem is joining the boards together. Without the jointer, it's not easy to get a square edge. The track saw is not precise enough to have a good 90° angle. So we finally bought a table saw!
 
 ![table saw](/img/projects/table/saw.jpg)
 
