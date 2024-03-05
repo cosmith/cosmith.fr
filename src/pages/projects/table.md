@@ -2,6 +2,8 @@
 
 I'm making a dinner table with my wife.
 
+## Design
+
 I started with a parametric design in Onshape, you can find it [here](https://cad.onshape.com/documents/7ebe5c4a06aeced9cc09a95f/w/8eb007216d6580dd68c8c7d2/e/00a4c07e4f81d7b21377baa0?renderMode=0&uiState=65c7ac5a481d4f745b5b7882).
 
 ![onshape](/img/projects/table/onshape.png)
@@ -9,6 +11,8 @@ I started with a parametric design in Onshape, you can find it [here](https://ca
 I found some nice ash hardwood not too far from my place, at [Scierie Rétif](https://www.scierie-retif.com/tarifs/planches/).
 
 ![choosing wood](/img/projects/table/buying.jpg)
+
+## Cutting and planing
 
 The first step is to do a rough cut of the wood into planks, and then to plane them.
 
@@ -28,4 +32,44 @@ The next problem is joining the boards together. Without the jointer, it's not e
 
 ![table saw](/img/projects/table/saw.jpg)
 
-To be continued...
+The table saw allowed us to create a straight edge for our boards. Since the saw blade is reasonably square, recutting the boards with a simple jig (a board that we can slide in the table's track) gives us a pretty good edge.
+
+![table saw jig](/img/projects/table/square-edge.jpg)
+
+After this is done on all boards, we could try to get a good looking table by arranging them while respecting the [heart to heart / back to back](https://www.youtube.com/watch?v=nQglMs2_zZY) principle:
+
+![test fit](/img/projects/table/test-fit.jpg)
+
+## Dominos
+
+The next week, we start the work to glue the tabletop together. We used our Domino to align the boards. I discovered that it's not so easy to join the boards perfectly flat, even though the Domino is supposed to do the heavy lifting by itself! Doing a few dozen holes in a row, I made some mistakes with holes that were off by 0.1 to 0.5 mm which is definitely noticeable once the boards are joined. Nothing that can't be fixed by a copious amount of sanding though.
+
+![domino](/img/projects/table/domino1.jpg)
+
+![domino](/img/projects/table/domino2.jpg)
+
+We had to move to our living room for this step because our small garden shed is way too small to work with this size of boards.
+
+## Glue up
+
+Then comes the stressful part: glueing everything together. Of course since we don't have nor the amount of clamps nor the size required for a build like this, we had to do it step by step.
+
+First, we glued 2 groups of 3 boards together. They fit into the clamps we had so that part wasn't too hard.
+
+![glue](/img/projects/table/glue1.jpg)
+
+Then we glued these two parts together into a wider board. We could still fit it into some bigger clamps that I had, plus we used some ratchet clamps that were pretty good to tighten things up.
+
+![glue](/img/projects/table/glue2.jpg)
+
+It wasn't so easy for the final two boards that still had the live edges though... We could only use two clamps on both ends were I cut small notches, but for the others we only had the straps.
+
+We had a few spots where it was still not good enough and there are some gaps. We'll try to fill them with some glue and sawdust.
+
+![glue](/img/projects/table/glue3.jpg)
+
+I actually broke one of the ratchet straps by tightening it too much... Which of course didn't help since we then only had two straps left.
+
+## Next steps
+
+Lots of sanding to come, and making the legs! To be continued...
