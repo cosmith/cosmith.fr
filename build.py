@@ -1,7 +1,6 @@
 import argparse
 import http.server
 import os
-import re
 import shutil
 import socketserver
 import markdown

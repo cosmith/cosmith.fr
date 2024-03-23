@@ -70,6 +70,37 @@ We had a few spots where it was still not good enough and there are some gaps. W
 
 I actually broke one of the ratchet straps by tightening it too much... Which of course didn't help since we then only had two straps left.
 
-## Next steps
+## Buildings the legs
 
-Lots of sanding to come, and making the legs! To be continued...
+We repeat the same process to prepare the boards for the legs. Unfortunately this time we didn't manage to get straight boards with this method, as the planer is too small for the length we have here (we don't use the full length so it's not as bad as it appears here in the end).
+
+![stand-board](/img/projects/table/stand-board.jpeg)
+
+We made a little jig for the tapered legs to be able to repeat the angle consistently.
+
+![legs-1](/img/projects/table/legs-1.jpeg)
+
+Here too the crooked wood didn't help getting perfectly sized legs, but nothing a bit of sanding can't fix!
+
+![legs-2](/img/projects/table/legs-2.jpeg)
+
+Here Suzanne is finishing the mortises for the extensions that we plan to build.
+
+![legs-routing](/img/projects/table/legs-routing.jpeg)
+
+Before glueing everything together, we did a dry fit upside down to check the dimensions and ended up reducing the width and length by about 10 cm.
+
+![legs-test](/img/projects/table/legs-test.jpeg)
+
+![legs-kit](/img/projects/table/legs-kit.jpeg)
+
+Finally it stands! Not glued yet though, and we're starting to doubt that these legs will be robust enough for the weight of the tabletop.
+
+![legs-standing](/img/projects/table/legs-standing.jpeg)
+
+Now we glue the legs on the long side...
+
+![legs-glue](/img/projects/table/legs-glue.jpeg)
+
+
+To be continued!
