@@ -1,6 +1,6 @@
 # Dinner table
 
-I'm making a dinner table with my wife.
+I made a dinner table with my wife!
 
 ## Design
 
@@ -102,5 +102,38 @@ Now we glue the legs on the long side...
 
 ![legs-glue](/img/projects/table/legs-glue.jpeg)
 
+![legs-glue 2](/img/projects/table/legs-glue2.jpeg)
 
-To be continued!
+After the glue up, we rounded the edges, sanded the legs and finished the sliding extension mechanism.
+
+![extension finish](/img/projects/table/extension.jpeg)
+
+![legs finish](/img/projects/table/legs-finish.jpeg)
+
+With a tabletop this thick, the table felt a bit wobbly. We decided to add wooden squares on each leg to try to improve stiffness.
+
+![squares](/img/projects/table/squares1.jpeg)
+
+![squares 2](/img/projects/table/squares2.jpeg)
+
+![squares 3](/img/projects/table/squares3.jpeg)
+
+## Finish
+
+Every aspiring woodworker knows that sanding is 90% of the work! My amazingly patient wife did most of the work here so I can't take credit for this part. Unfortunately it isn't a very interesting subject to photograph...
+
+Unlike repairing a crack in the wood with a bow tie!
+
+![bow tie](/img/projects/table/bowtie.jpeg)
+
+![bow tie 2](/img/projects/table/bowtie2.jpeg)
+
+The final cuts are made to cut the legs to length. First we make sure the table top is level, and then use a wooden block and a pencil to mark the same height on each leg. This way you get a perfectly level table by cutting precisely on the line.
+
+![cutting the legs to size](/img/projects/table/cutting-legs1.jpeg)
+
+![cutting the legs to size 2](/img/projects/table/cutting-legs2.jpeg)
+
+We finished it with some Rubio tannin primer + monocoat oil plus 2c + universal maintenance oil, we'll see if it survives our 3 kids' repeated attacks!
+
+![final](/img/projects/table/final.jpeg)x
