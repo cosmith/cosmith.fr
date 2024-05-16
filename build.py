@@ -3,12 +3,13 @@ import http.server
 import os
 import shutil
 import socketserver
+import sqlite3
 import markdown
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(ROOT_DIR, "data.db")
 BUILD_DIR = os.path.join(ROOT_DIR, "build")
 SOURCE_DIR = os.path.join(ROOT_DIR, "src")
-PAGES_DIR = os.path.join(SOURCE_DIR, "pages")
 STATIC_DIRS = ["css", "img"]
 
 
@@ -17,6 +18,45 @@ def load_layout(dev_mode=False):
         layout = f.read()
 
     return layout
+
+
+def execute_query(query):
+    """Helper function to execute a query and fetch results from the SQLite database."""
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        with conn:
+            cur = conn.cursor()
+            cur.execute(query)
+            results = cur.fetchall()
+        return results
+    except sqlite3.Error as e:
+        print(f"An error occurred: {e}")
+        return []
+    finally:
+        if conn:
+            conn.close()
+
+
+def get_pages():
+    return execute_query("SELECT slug, content FROM pages")
+
+
+def get_projects():
+    return execute_query("SELECT title, slug, description FROM projects")
+
+
+def render_markdown(content, layout):
+    html = markdown.markdown(content, extensions=["fenced_code", "codehilite"])
+    return layout.format(page=html)
+
+
+def save_html(slug, html, subdirectory=""):
+    if subdirectory:
+        os.makedirs(os.path.join(BUILD_DIR, subdirectory), exist_ok=True)
+
+    html_path = os.path.join(BUILD_DIR, subdirectory, f"{slug}.html")
+    with open(html_path, "w") as f:
+        f.write(html)
 
 
 def build_website(layout):
@@ -28,27 +68,18 @@ def build_website(layout):
             os.path.join(SOURCE_DIR, static_dir), os.path.join(BUILD_DIR, static_dir)
         )
 
-    for root, dirs, files in os.walk(PAGES_DIR):
-        # create subdirectories in build folder
-        for subdir in dirs:
-            os.makedirs(os.path.join(BUILD_DIR, subdir), exist_ok=True)
+    pages = get_pages()
+    for slug, content in pages:
+        print(f"rendering {slug}")
+        html = render_markdown(content, layout)
+        save_html(slug, html)
 
-        for file in files:
-            if not file.endswith(".md"):
-                continue
-
-            print(f"rendering {file}")
-            with open(os.path.join(root, file)) as f:
-                md = f.read()
-            html = markdown.markdown(md, extensions=["fenced_code", "codehilite"])
-            full_page = layout.format(page=html)
-            html_path = os.path.join(
-                BUILD_DIR,
-                root.replace(PAGES_DIR, "").lstrip(os.sep),
-                f"{os.path.splitext(file)[0]}.html",
-            )
-            with open(html_path, "w") as f:
-                f.write(full_page)
+    projects = get_projects()
+    for title, slug, description in projects:
+        print(f"rendering {slug}")
+        md = f"# {title}\n\n{description}"
+        html = render_markdown(md, layout)
+        save_html(slug, html, subdirectory="projects")
 
 
 class RewriteUrlsHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
