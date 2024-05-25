@@ -20,13 +20,13 @@ def load_layout(dev_mode=False):
     return layout
 
 
-def execute_query(query):
+def execute_query(query, params=()):
     """Helper function to execute a query and fetch results from the SQLite database."""
     try:
         conn = sqlite3.connect(DB_PATH)
         with conn:
             cur = conn.cursor()
-            cur.execute(query)
+            cur.execute(query, params)
             results = cur.fetchall()
         return results
     except sqlite3.Error as e:
@@ -42,7 +42,23 @@ def get_pages():
 
 
 def get_projects():
-    return execute_query("SELECT title, slug, description FROM projects")
+    return execute_query(
+        "SELECT id, title, slug, description, image FROM projects ORDER BY id DESC"
+    )
+
+
+def get_updates(project_id):
+    return execute_query(
+        "SELECT created_at, content FROM updates WHERE project_id = ? ORDER BY created_at ASC",
+        (project_id,),
+    )
+
+
+def get_latest_updates(count):
+    return execute_query(
+        "SELECT created_at, content FROM updates ORDER BY created_at DESC LIMIT ?",
+        (count,),
+    )
 
 
 def render_markdown(content, layout):
@@ -68,18 +84,43 @@ def build_website(layout):
             os.path.join(SOURCE_DIR, static_dir), os.path.join(BUILD_DIR, static_dir)
         )
 
+    # build "static" pages
     pages = get_pages()
     for slug, content in pages:
         print(f"rendering {slug}")
         html = render_markdown(content, layout)
         save_html(slug, html)
 
+    # build project pages
     projects = get_projects()
-    for title, slug, description in projects:
+
+    project_links = []
+    for project_id, title, slug, description, image in projects:
         print(f"rendering {slug}")
-        md = f"# {title}\n\n{description}"
+        md = f"# {title}\n\n{description}\n\n"
+        updates = get_updates(project_id)
+        for created_at, content in updates:
+            md += f"## {created_at}\n\n{content}\n\n"
         html = render_markdown(md, layout)
         save_html(slug, html, subdirectory="projects")
+
+    # project index page
+    for project_id, title, slug, description, image in projects:
+        project_links.append(
+            f"""## [{title}]({slug}.html)\n\n<a href="{slug}.html"><img class="project-cover" src="{image}"/></a>\n"""
+        )
+    project_list = "".join(project_links)
+    project_index_md = f"# Projects\n\n{project_list}"
+    project_index_html = render_markdown(project_index_md, layout)
+    save_html("index", project_index_html, subdirectory="projects")
+
+    # build log page
+    updates = get_latest_updates(20)
+    log_md = "# Build log\n\n"
+    for created_at, content in updates:
+        log_md += f"## {created_at}\n\n{content}\n\n"
+    log_html = render_markdown(log_md, layout)
+    save_html("index", log_html, subdirectory="build-log")
 
 
 class RewriteUrlsHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
@@ -122,8 +163,8 @@ if __name__ == "__main__":
     parser.add_argument(
         "--port",
         type=int,
-        default=8000,
-        help="Port to serve the website on (default: 8000).",
+        default=9000,
+        help="Port to serve the website on (default: 9000).",
     )
 
     args = parser.parse_args()
