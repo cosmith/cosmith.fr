@@ -106,3 +106,9 @@ img.project-cover {
   object-fit: cover;
   width: 100%;
 }
+
+img.attachment-thumb {
+  max-width: 150px;
+  height: auto;
+  margin: 5px;
+}
