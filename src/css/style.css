@@ -36,10 +36,14 @@ p {
 }
 
 /* links */
-a:not(:has(> img)) {
+a {
   text-decoration: none;
   color: inherit;
   border-bottom: 1px dotted #ccc;
+}
+
+a img {
+  border-bottom: none;
 }
 a:hover {
   color: #000;
