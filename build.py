@@ -80,7 +80,14 @@ def save_html(slug, html, subdirectory=""):
         f.write(html)
 
 
-def build_website(layout):
+def render_update(created_at, content, attachment_urls):
+    """Render the markdown for a single update with attachments."""
+    md = f"## {created_at}\n\n{content}\n\n"
+    if attachment_urls:
+        for url in attachment_urls.split(","):
+            md += f"![attachment]({url})\n\n"
+    return md
+
     shutil.rmtree(BUILD_DIR, ignore_errors=True)
 
     # copy static files
@@ -102,21 +109,10 @@ def build_website(layout):
     project_links = []
     for project_id, title, slug, description, image in projects:
         print(f"rendering {slug}")
-        md = f"# {title}\n\n{description}\n\n"
-
-        updates = get_updates(project_id)
-        print(project_id, updates)
-        for created_at, content, attachment_urls in updates:
-            print(f"  - update {created_at}")
-            md += f"## {created_at}\n\n{content}\n\n"
-
-            if not attachment_urls:
-                continue
-
-            for url in attachment_urls.split(","):
-                print(f"    - attachment {url}")
-                md += f"![attachment]({url})\n\n"
-
+        md = f"# {title}\n\n{description}\n\n" + "".join(
+            render_update(created_at, content, attachment_urls)
+            for created_at, content, attachment_urls in get_updates(project_id)
+        )
         html = render_markdown(md, layout)
         save_html(slug, html, subdirectory="projects")
 
@@ -133,12 +129,8 @@ def build_website(layout):
     # build log page
     updates = get_latest_updates(20)
     log_md = "# Build log\n\n"
-    for created_at, content in updates:
-        log_md += f"## {created_at}\n\n{content}\n\n"
-
-        for url in attachment_urls.split(","):
-            print(f"    - attachment {url}")
-            md += f"![attachment]({url})\n\n"
+    for created_at, content, attachment_urls in updates:
+        log_md += render_update(created_at, content, attachment_urls)
     log_html = render_markdown(log_md, layout)
     save_html("index", log_html, subdirectory="build-log")
 
