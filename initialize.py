@@ -42,5 +42,26 @@ def initialize_db():
     conn.close()
 
 
+def migration_001():
+    # Connect to the SQLite database
+    conn = sqlite3.connect("data.db")
+    cursor = conn.cursor()
+
+    # Add a new column to the projects table
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS attachments (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            update_id INTEGER NOT NULL,
+            url TEXT NOT NULL,
+            FOREIGN KEY (update_id) REFERENCES updates (id)
+        )
+    """)
+
+    # Commit the changes and close the connection
+    conn.commit()
+    conn.close()
+
+
 # Initialize the database
 initialize_db()
+migration_001()

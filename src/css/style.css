@@ -42,7 +42,7 @@ a {
   border-bottom: 1px dotted #ccc;
 }
 
-a img {
+a:has(img) {
   border-bottom: none;
 }
 a:hover {
@@ -114,5 +114,4 @@ img.project-cover {
 img.attachment-thumb {
   max-width: 150px;
   height: auto;
-  margin: 5px;
 }

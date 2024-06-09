@@ -61,10 +61,11 @@ def get_updates(project_id):
 
 def get_latest_updates(count):
     return execute_query(
-        """SELECT updates.created_at, updates.content, GROUP_CONCAT(attachments.url) as attachment_urls
+        """SELECT updates.created_at, projects.title, projects.slug, updates.content, GROUP_CONCAT(attachments.url) as attachment_urls
         FROM updates
+        JOIN projects ON updates.project_id = projects.id
         LEFT JOIN attachments ON updates.id = attachments.update_id
-        GROUP BY updates.id
+        GROUP BY updates.id, projects.title, projects.slug, updates.content
         ORDER BY updates.created_at DESC
         LIMIT ?""",
         (count,),
@@ -85,21 +86,26 @@ def save_html(slug, html, subdirectory=""):
         f.write(html)
 
 
-def render_update(created_at, content, attachment_urls, use_thumbnails=False):
-    """Render the markdown for a single update with attachments."""
+def render_update_project(created_at, content, attachment_urls):
     md = f"## {created_at}\n\n{content}\n\n"
     if attachment_urls:
         for url in attachment_urls.split(","):
-            if use_thumbnails:
-                md += f'<a href="{url}" target="_blank"><img class="attachment-thumb" src="{url}" /></a>\n\n'
-            else:
-                md += f'<a href="{url}" target="_blank"><img src="{url}" /></a>\n\n'
+            md += f'<a href="{url}" target="_blank"><img src="{url}" /></a>\n\n'
+    return md
+
+
+def render_update_build_log(
+    created_at, project_title, project_slug, content, attachment_urls
+):
+    md = f"## {created_at} - [{project_title}](/projects/{project_slug})\n\n{content}\n\n"
+    if attachment_urls:
+        for url in attachment_urls.split(","):
+            md += f'<a href="{url}" target="_blank"><img class="attachment-thumb" src="{url}" /></a>\n\n'
     return md
 
 
 def build_website(layout):
     shutil.rmtree(BUILD_DIR, ignore_errors=True)
-
     # copy static files
     for static_dir in STATIC_DIRS:
         shutil.copytree(
@@ -120,7 +126,7 @@ def build_website(layout):
     for project_id, title, slug, description, image in projects:
         print(f"rendering {slug}")
         md = f"# {title}\n\n{description}\n\n" + "".join(
-            render_update(created_at, content, attachment_urls, use_thumbnails=False)
+            render_update_project(created_at, content, attachment_urls)
             for created_at, content, attachment_urls in get_updates(project_id)
         )
         html = render_markdown(md, layout)
@@ -129,7 +135,7 @@ def build_website(layout):
     # project index page
     for project_id, title, slug, description, image in projects:
         project_links.append(
-            f"""## [{title}]({slug}.html)\n\n<a href="{slug}.html"><img class="project-cover" src="{image}"/></a>\n"""
+            f"""## [{title}]({slug})\n\n<a href="{slug}"><img class="project-cover" src="{image}"/></a>\n"""
         )
     project_list = "".join(project_links)
     project_index_md = f"# Projects\n\n{project_list}"
@@ -139,53 +145,10 @@ def build_website(layout):
     # build log page
     updates = get_latest_updates(20)
     log_md = "# Build log\n\n"
-    for created_at, content, attachment_urls in updates:
-        log_md += render_update(created_at, content, attachment_urls, use_thumbnails=True)
-    log_html = render_markdown(log_md, layout)
-    save_html("index", log_html, subdirectory="build-log")
-    shutil.rmtree(BUILD_DIR, ignore_errors=True)
-
-    # copy static files
-    for static_dir in STATIC_DIRS:
-        shutil.copytree(
-            os.path.join(SOURCE_DIR, static_dir), os.path.join(BUILD_DIR, static_dir)
+    for created_at, project_title, project_slug, content, attachment_urls in updates:
+        log_md += render_update_build_log(
+            created_at, project_title, project_slug, content, attachment_urls
         )
-
-    # build "static" pages
-    pages = get_pages()
-    for slug, content in pages:
-        print(f"rendering {slug}")
-        html = render_markdown(content, layout)
-        save_html(slug, html)
-
-    # build project pages
-    projects = get_projects()
-
-    project_links = []
-    for project_id, title, slug, description, image in projects:
-        print(f"rendering {slug}")
-        md = f"# {title}\n\n{description}\n\n" + "".join(
-            render_update(created_at, content, attachment_urls)
-            for created_at, content, attachment_urls in get_updates(project_id)
-        )
-        html = render_markdown(md, layout)
-        save_html(slug, html, subdirectory="projects")
-
-    # project index page
-    for project_id, title, slug, description, image in projects:
-        project_links.append(
-            f"""## [{title}]({slug}.html)\n\n<a href="{slug}.html"><img class="project-cover" src="{image}"/></a>\n"""
-        )
-    project_list = "".join(project_links)
-    project_index_md = f"# Projects\n\n{project_list}"
-    project_index_html = render_markdown(project_index_md, layout)
-    save_html("index", project_index_html, subdirectory="projects")
-
-    # build log page
-    updates = get_latest_updates(20)
-    log_md = "# Build log\n\n"
-    for created_at, content, attachment_urls in updates:
-        log_md += render_update(created_at, content, attachment_urls)
     log_html = render_markdown(log_md, layout)
     save_html("index", log_html, subdirectory="build-log")
 
