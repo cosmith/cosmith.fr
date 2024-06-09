@@ -49,7 +49,12 @@ def get_projects():
 
 def get_updates(project_id):
     return execute_query(
-        "SELECT created_at, content FROM updates WHERE project_id = ? ORDER BY created_at ASC",
+        """SELECT created_at, content, GROUP_CONCAT(attachments.url) as attachment_urls
+        FROM updates
+        LEFT JOIN attachments ON updates.id = attachments.update_id
+        WHERE project_id = ?
+        GROUP BY updates.id
+        ORDER BY created_at ASC""",
         (project_id,),
     )
 
@@ -98,9 +103,20 @@ def build_website(layout):
     for project_id, title, slug, description, image in projects:
         print(f"rendering {slug}")
         md = f"# {title}\n\n{description}\n\n"
+
         updates = get_updates(project_id)
-        for created_at, content in updates:
+        print(project_id, updates)
+        for created_at, content, attachment_urls in updates:
+            print(f"  - update {created_at}")
             md += f"## {created_at}\n\n{content}\n\n"
+
+            if not attachment_urls:
+                continue
+
+            for url in attachment_urls.split(","):
+                print(f"    - attachment {url}")
+                md += f"![attachment]({url})\n\n"
+
         html = render_markdown(md, layout)
         save_html(slug, html, subdirectory="projects")
 
@@ -119,6 +135,10 @@ def build_website(layout):
     log_md = "# Build log\n\n"
     for created_at, content in updates:
         log_md += f"## {created_at}\n\n{content}\n\n"
+
+        for url in attachment_urls.split(","):
+            print(f"    - attachment {url}")
+            md += f"![attachment]({url})\n\n"
     log_html = render_markdown(log_md, layout)
     save_html("index", log_html, subdirectory="build-log")
 
