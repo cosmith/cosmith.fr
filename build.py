@@ -13,11 +13,11 @@ SOURCE_DIR = os.path.join(ROOT_DIR, "src")
 STATIC_DIRS = ["css", "img"]
 
 
-def load_layout(dev_mode=False):
+def load_layout(build_id):
     with open(os.path.join(SOURCE_DIR, "index.html"), "r") as f:
         layout = f.read()
 
-    return layout
+    return layout.replace("{build_id}", build_id)
 
 
 def execute_query(query, params=()):
@@ -104,13 +104,29 @@ def render_update_build_log(
     return md
 
 
-def build_website(layout):
-    shutil.rmtree(BUILD_DIR, ignore_errors=True)
-    # copy static files
+def copy_static_files(build_id):
     for static_dir in STATIC_DIRS:
         shutil.copytree(
             os.path.join(SOURCE_DIR, static_dir), os.path.join(BUILD_DIR, static_dir)
         )
+
+    # rename css and js files to include the build ID
+    for static_dir in ["css"]:
+        for filename in os.listdir(os.path.join(BUILD_DIR, static_dir)):
+            if filename.endswith(".css") or filename.endswith(".js"):
+                parts = filename.split(".")
+                new_filename = f"{parts[0]}.{build_id}.{parts[1]}"
+                os.rename(
+                    os.path.join(BUILD_DIR, static_dir, filename),
+                    os.path.join(BUILD_DIR, static_dir, new_filename),
+                )
+
+
+def build_website(layout, build_id):
+    shutil.rmtree(BUILD_DIR, ignore_errors=True)
+
+    # copy static files
+    copy_static_files(build_id)
 
     # build "static" pages
     pages = get_pages()
@@ -199,8 +215,10 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    layout = load_layout(args.dev)
-    build_website(layout)
+    # generate a random build id to reset caching when changing static files
+    build_id = os.urandom(4).hex()
+    layout = load_layout(build_id)
+    build_website(layout, build_id)
 
     if args.serve:
         serve_website(args.port)
