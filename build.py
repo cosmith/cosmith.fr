@@ -88,6 +88,53 @@ def render_update(created_at, content, attachment_urls):
             md += f"![attachment]({url})\n\n"
     return md
 
+
+def build_website(layout):
+    shutil.rmtree(BUILD_DIR, ignore_errors=True)
+
+    # copy static files
+    for static_dir in STATIC_DIRS:
+        shutil.copytree(
+            os.path.join(SOURCE_DIR, static_dir), os.path.join(BUILD_DIR, static_dir)
+        )
+
+    # build "static" pages
+    pages = get_pages()
+    for slug, content in pages:
+        print(f"rendering {slug}")
+        html = render_markdown(content, layout)
+        save_html(slug, html)
+
+    # build project pages
+    projects = get_projects()
+
+    project_links = []
+    for project_id, title, slug, description, image in projects:
+        print(f"rendering {slug}")
+        md = f"# {title}\n\n{description}\n\n" + "".join(
+            render_update(created_at, content, attachment_urls)
+            for created_at, content, attachment_urls in get_updates(project_id)
+        )
+        html = render_markdown(md, layout)
+        save_html(slug, html, subdirectory="projects")
+
+    # project index page
+    for project_id, title, slug, description, image in projects:
+        project_links.append(
+            f"""## [{title}]({slug}.html)\n\n<a href="{slug}.html"><img class="project-cover" src="{image}"/></a>\n"""
+        )
+    project_list = "".join(project_links)
+    project_index_md = f"# Projects\n\n{project_list}"
+    project_index_html = render_markdown(project_index_md, layout)
+    save_html("index", project_index_html, subdirectory="projects")
+
+    # build log page
+    updates = get_latest_updates(20)
+    log_md = "# Build log\n\n"
+    for created_at, content, attachment_urls in updates:
+        log_md += render_update(created_at, content, attachment_urls)
+    log_html = render_markdown(log_md, layout)
+    save_html("index", log_html, subdirectory="build-log")
     shutil.rmtree(BUILD_DIR, ignore_errors=True)
 
     # copy static files
