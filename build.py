@@ -90,7 +90,7 @@ def render_update(created_at, content, attachment_urls):
     md = f"## {created_at}\n\n{content}\n\n"
     if attachment_urls:
         for url in attachment_urls.split(","):
-            md += f"![attachment]({url})\n\n"
+            md += f'<a href="{url}" target="_blank"><img class="attachment-thumb" src="{url}" /></a>\n\n'
     return md
 
 
