@@ -85,12 +85,15 @@ def save_html(slug, html, subdirectory=""):
         f.write(html)
 
 
-def render_update(created_at, content, attachment_urls):
+def render_update(created_at, content, attachment_urls, use_thumbnails=False):
     """Render the markdown for a single update with attachments."""
     md = f"## {created_at}\n\n{content}\n\n"
     if attachment_urls:
         for url in attachment_urls.split(","):
-            md += f'<a href="{url}" target="_blank"><img class="attachment-thumb" src="{url}" /></a>\n\n'
+            if use_thumbnails:
+                md += f'<a href="{url}" target="_blank"><img class="attachment-thumb" src="{url}" /></a>\n\n'
+            else:
+                md += f'<a href="{url}" target="_blank"><img src="{url}" /></a>\n\n'
     return md
 
 
@@ -117,7 +120,7 @@ def build_website(layout):
     for project_id, title, slug, description, image in projects:
         print(f"rendering {slug}")
         md = f"# {title}\n\n{description}\n\n" + "".join(
-            render_update(created_at, content, attachment_urls)
+            render_update(created_at, content, attachment_urls, use_thumbnails=False)
             for created_at, content, attachment_urls in get_updates(project_id)
         )
         html = render_markdown(md, layout)
@@ -137,7 +140,7 @@ def build_website(layout):
     updates = get_latest_updates(20)
     log_md = "# Build log\n\n"
     for created_at, content, attachment_urls in updates:
-        log_md += render_update(created_at, content, attachment_urls)
+        log_md += render_update(created_at, content, attachment_urls, use_thumbnails=True)
     log_html = render_markdown(log_md, layout)
     save_html("index", log_html, subdirectory="build-log")
     shutil.rmtree(BUILD_DIR, ignore_errors=True)
