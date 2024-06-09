@@ -61,7 +61,12 @@ def get_updates(project_id):
 
 def get_latest_updates(count):
     return execute_query(
-        "SELECT created_at, content FROM updates ORDER BY created_at DESC LIMIT ?",
+        """SELECT updates.created_at, updates.content, GROUP_CONCAT(attachments.url) as attachment_urls
+        FROM updates
+        LEFT JOIN attachments ON updates.id = attachments.update_id
+        GROUP BY updates.id
+        ORDER BY updates.created_at DESC
+        LIMIT ?""",
         (count,),
     )
 
