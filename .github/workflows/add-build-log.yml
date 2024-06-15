@@ -12,12 +12,16 @@ jobs:
         with:
           ref: main
 
-      - name: Commit report
+      - name: Commit update
         run: |
           git config --global user.name 'Corentin Smith'
           git config --global user.email 'cosmith@users.noreply.github.com'
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/cosmith/cosmith.fr
 
           git checkout "${GITHUB_REF:11}"
-          git commit -m "Action commit test" --allow-empty
+
+          python add_build_log.py
+          git add data.db
+
+          git commit -m "Action commit test"
           git push
