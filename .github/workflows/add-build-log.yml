@@ -1,6 +1,9 @@
 name: Add build log
 on: workflow_dispatch
 
+permissions:
+  contents: write
+
 jobs:
   report:
     runs-on: ubuntu-latest
@@ -13,9 +16,8 @@ jobs:
         run: |
           git config --global user.name 'Corentin Smith'
           git config --global user.email 'cosmith@users.noreply.github.com'
-          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/cosmith.fr
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/cosmith/cosmith.fr
 
-          git switch main
-          git checkout "${GITHUB_REF}"
+          git checkout "${GITHUB_REF:11}"
           git commit -m "Action commit test" --allow-empty
           git push
