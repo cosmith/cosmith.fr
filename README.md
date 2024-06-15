@@ -2,17 +2,7 @@
 =============================
 Personal website 
 
-# Website Build Script
-
-This script automates the process of building a static website from markdown files and serving it locally for development and testing purposes.
-
-## Features
-
-- Converts Markdown files to HTML.
-- Supports live reloading in development mode.
-- Serves the website locally.
-- Includes a layout template for consistent page design.
-- Handles static assets like CSS and images.
+See https://cosmith.fr/projects/this-website for more info!
 
 ## Requirements
 
@@ -49,17 +39,3 @@ This script automates the process of building a static website from markdown fil
     ```
     python build.py --dev --serve
     ```
-
-## Structure
-
-- `src/`: Contains the source files for the website.
-    - `pages/`: Markdown files to be converted into HTML.
-    - `index.html`: Layout template.
-    - `css/`, `img/`: Directories for static assets.
-- `build/`: Destination directory for the built website.
-
-## Extending
-
-- Modify the `index.html` layout template to change the website's look and feel.
-- Add more static directories in the `STATIC_DIRS` list as needed.
-- Enhance the `RewriteUrlsHTTPRequestHandler` class for additional URL rewriting rules.
