@@ -6,12 +6,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
 
       - name: Commit report
         run: |
           git config --global user.name 'Corentin Smith'
           git config --global user.email 'cosmith@users.noreply.github.com'
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/cosmith.fr
+
+          git switch main
           git checkout "${GITHUB_REF}"
           git commit -m "Action commit test" --allow-empty
           git push
