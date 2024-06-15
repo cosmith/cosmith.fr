@@ -1,0 +1,17 @@
+name: Add build log
+on: workflow_dispatch
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Commit report
+        run: |
+          git config --global user.name 'Corentin Smith'
+          git config --global user.email 'cosmith@users.noreply.github.com'
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/cosmith.fr
+          git checkout "${GITHUB_REF}"
+          git commit -m "Action commit test" --allow-empty
+          git push
