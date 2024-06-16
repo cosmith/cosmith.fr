@@ -103,6 +103,7 @@ blockquote {
 img {
   max-width: 100%;
   height: auto;
+  max-height: 600px;
 }
 
 img.project-cover {
@@ -112,6 +113,8 @@ img.project-cover {
 }
 
 img.attachment-thumb {
-  max-width: 150px;
-  height: auto;
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border: 1px solid #ccc;
 }

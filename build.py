@@ -66,7 +66,7 @@ def get_latest_updates(count):
         JOIN projects ON updates.project_id = projects.id
         LEFT JOIN attachments ON updates.id = attachments.update_id
         GROUP BY updates.id, projects.title, projects.slug, updates.content
-        ORDER BY updates.created_at DESC
+        ORDER BY updates.created_at DESC, updates.id DESC
         LIMIT ?""",
         (count,),
     )
