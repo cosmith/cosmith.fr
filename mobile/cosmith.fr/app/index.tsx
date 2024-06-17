@@ -1,7 +1,7 @@
 import { Text, SafeAreaView, ScrollView, View } from "react-native";
 
 import { Link, Stack } from "expo-router";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import { downloadDatabase } from "../lib/databaseSetup";
 import Markdown from "react-native-markdown-display";
@@ -9,15 +9,19 @@ import { getProjects } from "../lib/database";
 
 import { styles } from "../components/styles";
 import { Screen } from "../components/Screen";
+import { DatabaseUpdatedContext } from "../lib/DatabaseUpdatedContext";
 
 export default function App() {
   const [rows, setRows] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const { databaseUpdated } = useContext(DatabaseUpdatedContext);
 
   const loadDatabase = async () => {
-    setLoading(true);
-    await downloadDatabase();
-    setLoading(false);
+    if (!databaseUpdated) {
+      setLoading(true);
+      await downloadDatabase();
+      setLoading(false);
+    }
     const projects = await getProjects();
     setRows(projects);
   };
@@ -47,7 +51,7 @@ export default function App() {
             <View key={project.id}>
               <Link
                 push
-                href={`/projects/${project.id}`}
+                href={`/projects/${project.id}/`}
                 style={styles.projectLink}
               >
                 {project.title}

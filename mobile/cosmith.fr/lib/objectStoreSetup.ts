@@ -1,51 +1,48 @@
+import * as FileSystem from "expo-file-system";
+
+// polyfills needed for S3
+import "react-native-get-random-values";
+import { ReadableStream } from "web-streams-polyfill";
+globalThis.ReadableStream = ReadableStream;
+
 import { S3 } from "@aws-sdk/client-s3";
 
 import { Buffer } from "buffer";
+
+const BUCKET_NAME = "cosmith";
 
 // Ensure the Buffer is available globally
 global.Buffer = Buffer;
 
 // Configure S3 client
-const s3 = new S3({
+const config = {
   region: "auto",
   endpoint: process.env.EXPO_PUBLIC_OBJECT_STORE_ENDPOINT,
   credentials: {
     accessKeyId: process.env.EXPO_PUBLIC_OBJECT_STORE_ACCESS_KEY_ID,
     secretAccessKey: process.env.EXPO_PUBLIC_OBJECT_STORE_SECRET_ACCESS_KEY,
   },
-  forcePathStyle: true,
-});
+};
+const s3 = new S3(config);
 
-const uploadFile = async (fileUri, bucketName, key) => {
+export async function uploadFile(fileUri, key, mimeType) {
   try {
-    // Read the file as a binary buffer
-    const response = await fetch(fileUri);
-    const blob = await response.blob();
-    const buffer = await blob.arrayBuffer();
-
-    const params = {
-      Bucket: bucketName, // Replace with your bucket name
-      Key: key, // Replace with the desired key (file name) in the bucket
-      Body: Buffer.from(buffer),
-      ContentType: blob.type,
-    };
+    // Read the file as a b64 string
+    const fileInfo = await FileSystem.getInfoAsync(fileUri);
+    const blob = await FileSystem.readAsStringAsync(fileUri, {
+      encoding: FileSystem.EncodingType.Base64,
+    });
 
     // Upload the file
-    const data = await s3.putObject(params);
-    console.log("File uploaded successfully:", data.Location);
-    return data.Location;
+    const data = await s3.putObject({
+      Bucket: BUCKET_NAME,
+      Key: key,
+      Body: Buffer.from(blob, "base64"),
+    });
+
+    console.log("File uploaded successfully:", data);
   } catch (error) {
     console.error("Error uploading file:", error);
     throw error;
   }
-};
-
-function createFile() {
-  const content = "This is a sample string content to be uploaded as a file.";
-  const bucketName = "cosmith";
-  const key = "your-desired-file-name.txt";
-
-  uploadFile(content, bucketName, key)
-    .then((location) => console.log("File uploaded to:", location))
-    .catch((error) => console.error("Upload failed:", error));
 }

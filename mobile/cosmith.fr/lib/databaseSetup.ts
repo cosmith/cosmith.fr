@@ -1,25 +1,9 @@
-import {
-  Text,
-  SafeAreaView,
-  StyleSheet,
-  Pressable,
-  ScrollView,
-  View,
-} from "react-native";
-
-// Import necessary modules
-import { S3 } from "@aws-sdk/client-s3";
-
 import * as FileSystem from "expo-file-system";
 import * as SQLite from "expo-sqlite";
-import { Buffer } from "buffer";
-import { useState } from "react";
-
-// Ensure the Buffer is available globally
-global.Buffer = Buffer;
 
 const DATABASE_NAME = "data.db";
-const DATABASE_URI = FileSystem.documentDirectory + "SQLite/" + DATABASE_NAME;
+export const DATABASE_URI =
+  FileSystem.documentDirectory + "SQLite/" + DATABASE_NAME;
 
 let loadedDatabase = null;
 
