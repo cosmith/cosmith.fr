@@ -141,7 +141,10 @@ def build_website(layout, build_id):
     project_links = []
     for project_id, title, slug, description, image in projects:
         print(f"rendering {slug}")
-        md = f"# {title}\n\n{description}\n\n" + "".join(
+        md = f"# {title}\n\n"
+        md += f'<img class="project-cover" src="{image}" />\n\n'
+        md += f"\n{description}\n"
+        md += "".join(
             render_update_project(created_at, content, attachment_urls)
             for created_at, content, attachment_urls in get_updates(project_id)
         )
