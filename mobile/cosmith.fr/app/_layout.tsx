@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { TouchableOpacity, StyleSheet, Text, View } from "react-native";
 import { DatabaseUpdatedContext } from "../lib/DatabaseUpdatedContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { uploadDatabase } from "../lib/upload";
+import { triggerWebsiteUpdate, uploadDatabase } from "../lib/upload";
 
 function App() {
   const { databaseUpdated, setDatabaseUpdated } = React.useContext(
@@ -17,6 +17,13 @@ function App() {
       console.error("Error uploading database:", error);
     }
     console.log("Database saved");
+
+    try {
+      await triggerWebsiteUpdate();
+    } catch (error) {
+      console.error("Error triggering website update:", error);
+    }
+
     await setDatabaseUpdated(false);
     console.log("Database updated false");
   };
