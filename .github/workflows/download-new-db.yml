@@ -23,7 +23,7 @@ jobs:
 
       - name: Download data.db from Cloudflare R2
         run: |
-          aws --endpoint-url=${{ secrets.OBJECT_STORE_ENDPOINT }} s3 cp s3://your-bucket-name/data.db data.db
+          aws --endpoint-url=${{ secrets.OBJECT_STORE_ENDPOINT }} s3 cp s3://cosmith/data.db data.db
 
       - name: Commit update
         run: |
