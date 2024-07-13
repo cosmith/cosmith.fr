@@ -6,7 +6,21 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { uploadDatabase } from "../lib/upload";
 
 function App() {
-  const { databaseUpdated } = React.useContext(DatabaseUpdatedContext);
+  const { databaseUpdated, setDatabaseUpdated } = React.useContext(
+    DatabaseUpdatedContext
+  );
+
+  const onSavePress = async () => {
+    try {
+      await uploadDatabase();
+    } catch (error) {
+      console.error("Error uploading database:", error);
+    }
+    console.log("Database saved");
+    await setDatabaseUpdated(false);
+    console.log("Database updated false");
+  };
+
   return (
     <>
       <Stack />
@@ -17,7 +31,7 @@ function App() {
             <TouchableOpacity style={styles.button} onPress={() => {}}>
               <Text style={[styles.buttonText, { color: "red" }]}>Discard</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={uploadDatabase}>
+            <TouchableOpacity style={styles.button} onPress={onSavePress}>
               <Text style={styles.buttonText}>Save</Text>
             </TouchableOpacity>
           </View>
@@ -29,7 +43,7 @@ function App() {
 
 export default function Layout() {
   const [databaseUpdated, setDatabaseUpdatedValue] = React.useState(null);
-  async function setDatabaseUpdated(value) {
+  async function setDatabaseUpdated(value: boolean) {
     setDatabaseUpdatedValue(value);
     await AsyncStorage.setItem("databaseUpdated", value.toString());
   }
