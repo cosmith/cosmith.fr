@@ -5,7 +5,7 @@ permissions:
   contents: write
 
 jobs:
-  report:
+  download-db:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
