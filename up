@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Activate virtual environment (uncomment if you're using a virtual environment)
+source .venv/bin/activate
+
+# Install or update dependencies
+pip install -r requirements.txt
+
+# Run the development server
+python build.py --dev
+
+# Deactivate virtual environment (uncomment if you're using a virtual environment)
+deactivate
