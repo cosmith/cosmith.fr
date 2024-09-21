@@ -1,3 +1,4 @@
-markdown
-pygments
-watchdog
+markdown==3.5.2
+pygments==2.18.0
+watchdog==5.0.2
+django==5.1.1
