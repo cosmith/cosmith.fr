@@ -12,8 +12,8 @@
     "import:sqlite": "tsx scripts/import-sqlite-to-instant.ts"
   },
   "dependencies": {
-    "@instantdb/admin": "^0.20.16",
-    "@instantdb/core": "^0.20.16",
+    "@instantdb/admin": "^1.0.39",
+    "@instantdb/core": "^1.0.39",
     "@types/node": "^24.2.0",
     "chokidar": "^4.0.3",
     "commander": "12.1.0",

@@ -5,8 +5,8 @@
     "": {
       "name": "cosmith-website",
       "dependencies": {
-        "@instantdb/admin": "^0.20.16",
-        "@instantdb/core": "^0.20.16",
+        "@instantdb/admin": "^1.0.39",
+        "@instantdb/core": "^1.0.39",
         "@types/node": "^24.2.0",
         "chokidar": "^4.0.3",
         "commander": "12.1.0",
@@ -71,9 +71,15 @@
 
     "@esbuild/win32-x64": ["@esbuild/win32-x64@0.25.12", "", { "os": "win32", "cpu": "x64" }, "sha512-alJC0uCZpTFrSL0CCDjcgleBXPnCrEAhTBILpeAp7M/OFgoqtAetfBzX0xM00MUsVVPpVjlPuMbREqnZCXaTnA=="],
 
-    "@instantdb/admin": ["@instantdb/admin@0.20.16", "", { "dependencies": { "@instantdb/core": "v0.20.16" } }, "sha512-/0psyIjV9L1UD2ccDjeM1SL/lAOXUU0Oa3gLtgndaFM9fv48LB33nkM0m8lX64n89w1Ond07m/JNGnh4FaqX0A=="],
+    "@instantdb/admin": ["@instantdb/admin@1.0.39", "", { "dependencies": { "@instantdb/core": "1.0.39", "@instantdb/eventsource": "4.1.0-2", "@instantdb/version": "1.0.39", "@instantdb/webhooks": "1.0.39", "cookie": "^1.1.1", "uuid": "^11.1.0" } }, "sha512-LJJ5mLHRHGDvEAW0oeWoYsC+qf9q4+/nzeh1eOFxB2KRchpB4AvpGnvd+NHzDv2UGc9AGwWFvoTdGTrcCr0wEQ=="],
 
-    "@instantdb/core": ["@instantdb/core@0.20.16", "", { "dependencies": { "mutative": "^1.0.10", "uuid": "^11.1.0" } }, "sha512-BtESCdH+UhGahi/wHGz4jV+LchiXusjsyu9jHjDQCPnMB4lc6IyUBv+dcouxKcQTMiL73RvdoTU9sglULs5HTw=="],
+    "@instantdb/core": ["@instantdb/core@1.0.39", "", { "dependencies": { "@instantdb/version": "1.0.39", "mutative": "^1.0.10", "uuid": "^11.1.0" } }, "sha512-upIeDwKXq7tyQ2euSbl+5g4evY2HVe4AeInTSozJRRL6GDitNMLN5ts/tIyNtEepHvSQ1yZaD/f02/rlvTr+TA=="],
+
+    "@instantdb/eventsource": ["@instantdb/eventsource@4.1.0-2", "", { "dependencies": { "eventsource-parser": "^3.0.1" } }, "sha512-k2uzhsRzdD7hzV3fv+eoCRNeluZcj4pDfUKKAhvIS6xshc7zHkaM9/m3vxBgaYoNVmvOyaGp84TcHG0/Bp7k4g=="],
+
+    "@instantdb/version": ["@instantdb/version@1.0.39", "", {}, "sha512-JhOmjURaAkW8RQZi7kvpaao73MTT+A2jTSlJKx+wdm7SAIQJsIIyrN8F17TyLzEb2rXXnIWXFGis6lv+3fUMwg=="],
+
+    "@instantdb/webhooks": ["@instantdb/webhooks@1.0.39", "", { "dependencies": { "@instantdb/core": "1.0.39" } }, "sha512-KCsfO5Tp/gnDCng/+r4JTIhjZsxWNxQlSIlS+tBf5GYCYr0Ufr/XVq9tR3Z2MkHtFHJCNBYYgFYkZxOKBG7evg=="],
 
     "@types/node": ["@types/node@24.2.0", "", { "dependencies": { "undici-types": "~7.10.0" } }, "sha512-3xyG3pMCq3oYCNg7/ZP+E1ooTaGB4cG8JWRsqqOYQdbWNY4zbaV0Ennrd7stjiJEFZCaybcIgpTjJWHRfBSIDw=="],
 
@@ -81,9 +87,13 @@
 
     "commander": ["commander@12.1.0", "", {}, "sha512-Vw8qHK3bZM9y/P10u3Vib8o/DdkvA2OtPtZvD871QKjy74Wj1WSKFILMPRPSdUSx5RFK1arlJzEtA4PkFgnbuA=="],
 
+    "cookie": ["cookie@1.1.1", "", {}, "sha512-ei8Aos7ja0weRpFzJnEA9UHJ/7XQmqglbRwnf2ATjcB9Wq874VKH9kfjjirM6UhU2/E5fFYadylyhFldcqSidQ=="],
+
     "dotenv": ["dotenv@17.2.1", "", {}, "sha512-kQhDYKZecqnM0fCnzI5eIv5L4cAe/iRI+HqMbO/hbRdTAeXDG+M9FjipUxNfbARuEg4iHIbhnhs78BCHNbSxEQ=="],
 
     "esbuild": ["esbuild@0.25.12", "", { "optionalDependencies": { "@esbuild/aix-ppc64": "0.25.12", "@esbuild/android-arm": "0.25.12", "@esbuild/android-arm64": "0.25.12", "@esbuild/android-x64": "0.25.12", "@esbuild/darwin-arm64": "0.25.12", "@esbuild/darwin-x64": "0.25.12", "@esbuild/freebsd-arm64": "0.25.12", "@esbuild/freebsd-x64": "0.25.12", "@esbuild/linux-arm": "0.25.12", "@esbuild/linux-arm64": "0.25.12", "@esbuild/linux-ia32": "0.25.12", "@esbuild/linux-loong64": "0.25.12", "@esbuild/linux-mips64el": "0.25.12", "@esbuild/linux-ppc64": "0.25.12", "@esbuild/linux-riscv64": "0.25.12", "@esbuild/linux-s390x": "0.25.12", "@esbuild/linux-x64": "0.25.12", "@esbuild/netbsd-arm64": "0.25.12", "@esbuild/netbsd-x64": "0.25.12", "@esbuild/openbsd-arm64": "0.25.12", "@esbuild/openbsd-x64": "0.25.12", "@esbuild/openharmony-arm64": "0.25.12", "@esbuild/sunos-x64": "0.25.12", "@esbuild/win32-arm64": "0.25.12", "@esbuild/win32-ia32": "0.25.12", "@esbuild/win32-x64": "0.25.12" }, "bin": { "esbuild": "bin/esbuild" } }, "sha512-bbPBYYrtZbkt6Os6FiTLCTFxvq4tt3JKall1vRwshA3fdVztsLAatFaZobhkBC8/BrPetoa0oksYoKXoG4ryJg=="],
+
+    "eventsource-parser": ["eventsource-parser@3.0.8", "", {}, "sha512-70QWGkr4snxr0OXLRWsFLeRBIRPuQOvt4s8QYjmUlmlkyTZkRqS7EDVRZtzU3TiyDbXSzaOeF0XUKy8PchzukQ=="],
 
     "fsevents": ["fsevents@2.3.3", "", { "os": "darwin" }, "sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw=="],
 
