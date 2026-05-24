@@ -12,7 +12,8 @@
     "serve": "tsx site/build.ts --serve",
     "build:site": "tsx site/build.ts",
     "dev:site": "tsx site/build.ts --dev --port 9000",
-    "import:sqlite": "tsx scripts/import-sqlite-to-instant.ts"
+    "import:sqlite": "tsx scripts/import-sqlite-to-instant.ts",
+    "setup:content-deploy-hook": "tsx scripts/setup-content-deploy-hook.ts"
   },
   "dependencies": {
     "@instantdb/admin": "^1.0.39",
