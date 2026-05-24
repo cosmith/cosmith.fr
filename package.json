@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Personal website with InstantDB",
   "type": "module",
+  "engines": {
+    "node": ">=24 <25"
+  },
   "scripts": {
     "dev": "tsx site/build.ts --dev",
     "build": "tsx site/build.ts",
