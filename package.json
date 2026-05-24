@@ -1,0 +1,25 @@
+{
+  "name": "cosmith-website",
+  "version": "1.0.0",
+  "description": "Personal website with InstantDB",
+  "type": "module",
+  "scripts": {
+    "dev": "bun run site/build.ts --dev",
+    "build": "bun run site/build.ts",
+    "serve": "bun run site/build.ts --serve",
+    "build:site": "bun run site/build.ts",
+    "dev:site": "bun run site/build.ts --dev --port 9000",
+    "import:sqlite": "bun run scripts/import-sqlite-to-instant.ts"
+  },
+  "dependencies": {
+    "@instantdb/admin": "^0.20.16",
+    "@instantdb/core": "^0.20.16",
+    "@types/node": "^24.2.0",
+    "chokidar": "^4.0.3",
+    "commander": "^14.0.0",
+    "dotenv": "^17.2.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  }
+}
