@@ -48,31 +48,18 @@ function pageTitle(slug: string): string {
 }
 
 function dateToTimestamp(date: string, legacyId = 0): number {
-  return new Date(`${date}T00:00:00.000Z`).getTime() + legacyId;
+  const timestamp = new Date(`${date}T00:00:00.000Z`).getTime();
+  if (Number.isNaN(timestamp)) {
+    throw new Error(`Invalid date: ${date}`);
+  }
+
+  return timestamp + legacyId;
 }
 
 async function main() {
   const sqlitePath = getArg('--sqlite');
   if (!sqlitePath) {
     throw new Error('Usage: bun run scripts/import-sqlite-to-instant.ts --sqlite=/path/to/db.sqlite3');
-  }
-
-  const existing = await db.query({
-    attachments: {},
-    updates: {},
-    projects: {},
-    pages: {},
-  });
-
-  const deleteSteps = [
-    ...existing.attachments.map((item) => db.tx.attachments[item.id].delete()),
-    ...existing.updates.map((item) => db.tx.updates[item.id].delete()),
-    ...existing.projects.map((item) => db.tx.projects[item.id].delete()),
-    ...existing.pages.map((item) => db.tx.pages[item.id].delete()),
-  ];
-
-  if (deleteSteps.length > 0) {
-    await db.transact(deleteSteps);
   }
 
   const pages = sql<SqlPage>(sqlitePath, 'select id, slug, content from pages order by id');
@@ -150,8 +137,23 @@ async function main() {
     );
   }
 
-  if (steps.length > 0) {
-    await db.transact(steps);
+  const existing = await db.query({
+    attachments: {},
+    updates: {},
+    projects: {},
+    pages: {},
+  });
+
+  const deleteSteps = [
+    ...existing.attachments.map((item) => db.tx.attachments[item.id].delete()),
+    ...existing.updates.map((item) => db.tx.updates[item.id].delete()),
+    ...existing.projects.map((item) => db.tx.projects[item.id].delete()),
+    ...existing.pages.map((item) => db.tx.pages[item.id].delete()),
+  ];
+
+  const transactionSteps = [...deleteSteps, ...steps];
+  if (transactionSteps.length > 0) {
+    await db.transact(transactionSteps);
   }
 
   console.log(
