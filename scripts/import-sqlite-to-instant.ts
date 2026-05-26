@@ -1,11 +1,6 @@
-import { init, id } from '@instantdb/admin';
+import { id } from '@instantdb/admin';
 import { execFileSync } from 'node:child_process';
-import { config } from 'dotenv';
-import schema from '../src/schema.js';
-
-config();
-
-const APP_ID = 'de6141d2-6507-48c1-981e-9ba2c71ccc6d';
+import db from '../src/admin-db.js';
 
 type SqlPage = {
   id: number;
@@ -61,16 +56,6 @@ async function main() {
   if (!sqlitePath) {
     throw new Error('Usage: bun run scripts/import-sqlite-to-instant.ts --sqlite=/path/to/db.sqlite3');
   }
-
-  if (!process.env.INSTANT_APP_ADMIN_TOKEN) {
-    throw new Error('INSTANT_APP_ADMIN_TOKEN is required');
-  }
-
-  const db = init({
-    appId: APP_ID,
-    adminToken: process.env.INSTANT_APP_ADMIN_TOKEN,
-    schema,
-  });
 
   const existing = await db.query({
     attachments: {},

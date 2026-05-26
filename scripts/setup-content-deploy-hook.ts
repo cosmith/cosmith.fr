@@ -1,11 +1,6 @@
-import { init } from '@instantdb/admin';
-import { config } from 'dotenv';
-import schema from '../src/schema.js';
+import db from '../src/admin-db.js';
+import { requiredEnv } from '../src/instant-config.js';
 
-config();
-
-const APP_ID =
-  process.env.INSTANT_APP_ID || 'de6141d2-6507-48c1-981e-9ba2c71ccc6d';
 const CLOUDFLARE_PROJECT_NAME =
   process.env.CLOUDFLARE_PAGES_PROJECT_NAME || 'cosmith-fr';
 const CLOUDFLARE_BRANCH =
@@ -35,18 +30,13 @@ type CloudflareResponse<T> = {
   messages: unknown[];
 };
 
-function requiredEnv(name: string): string {
-  const value = process.env[name];
-  if (!value) {
-    throw new Error(`${name} is required`);
-  }
-  return value;
-}
-
 function sameSet(actual: readonly string[], expected: readonly string[]): boolean {
+  const actualSet = new Set(actual);
+  const expectedSet = new Set(expected);
+
   return (
-    actual.length === expected.length &&
-    expected.every((item) => actual.includes(item))
+    actualSet.size === expectedSet.size &&
+    [...expectedSet].every((item) => actualSet.has(item))
   );
 }
 
@@ -102,11 +92,6 @@ async function ensureCloudflareDeployHook(): Promise<CloudflareDeployHook> {
 
 async function ensureInstantWebhook(deployHook: CloudflareDeployHook) {
   const triggerUrl = `https://api.cloudflare.com/client/v4/pages/webhooks/deploy_hooks/${deployHook.hook_id}`;
-  const db = init({
-    appId: APP_ID,
-    adminToken: requiredEnv('INSTANT_APP_ADMIN_TOKEN'),
-    schema,
-  });
   const webhooks = await db.webhooks.manager.list();
   const existing =
     webhooks.find((webhook) => webhook.sink.url === triggerUrl) ||

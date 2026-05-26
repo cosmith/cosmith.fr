@@ -1,5 +1,4 @@
 import { program } from 'commander';
-import { init } from '@instantdb/admin';
 import { watch } from 'chokidar';
 import { createServer } from 'http';
 import { readFile, writeFile, mkdir, cp, readdir, rename, rm } from 'fs/promises';
@@ -7,11 +6,8 @@ import { existsSync } from 'fs';
 import { join, dirname, extname, basename } from 'path';
 import { fileURLToPath } from 'url';
 import { randomBytes } from 'crypto';
-import { config } from 'dotenv';
 import { spawnSync } from 'child_process';
-import schema from '../src/schema.js';
-
-config();
+import db from '../src/admin-db.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -24,12 +20,16 @@ const PROJECT_DIR = dirname(ROOT_DIR);
 const VENV_PYTHON = join(PROJECT_DIR, '.venv', 'bin', 'python');
 const PYTHON = existsSync(VENV_PYTHON) ? VENV_PYTHON : 'python3';
 
-const APP_ID = 'de6141d2-6507-48c1-981e-9ba2c71ccc6d';
-const db = init({
-  appId: APP_ID,
-  adminToken: process.env.INSTANT_APP_ADMIN_TOKEN!,
-  schema
-});
+type BuildPaths = {
+  buildDir: string;
+  sourceDir: string;
+  staticDirs: string[];
+};
+
+type BuildConfig = BuildPaths & {
+  buildId: string;
+  layoutTemplate: string;
+};
 
 async function loadLayoutTemplate(): Promise<string> {
   return await readFile(join(SOURCE_DIR, 'index.html'), 'utf-8');
@@ -61,59 +61,34 @@ function renderMarkdownWithPython(content: string): string {
   return result.stdout;
 }
 
-class Renderer {
-  constructor(
-    private layoutTemplate: string,
-    private buildId: string
-  ) {}
+function renderMarkdown(layoutTemplate: string, buildId: string, content: string): string {
+  const htmlContent = renderMarkdownWithPython(content);
+  return layoutTemplate
+    .replace('{page}', htmlContent)
+    .replace(/{build_id}/g, buildId);
+}
 
-  renderMarkdown(content: string): string {
-    const htmlContent = renderMarkdownWithPython(content);
-    return this.layoutTemplate
-      .replace('{page}', htmlContent)
-      .replace(/{build_id}/g, this.buildId);
+function renderUpdate(
+  header: string,
+  content: string,
+  attachmentUrls: string[],
+  imageClass = '',
+): string {
+  const imageClassAttribute = imageClass ? ` class="${imageClass}"` : '';
+  let mdContent = `${header}\n\n${content}\n\n`;
+
+  for (const url of attachmentUrls) {
+    mdContent += `<a href="${url}" target="_blank"><img${imageClassAttribute} src="${url}" /></a>\n\n`;
   }
 
-  renderUpdateProject(createdAt: number, content: string, attachmentUrls: string[]): string {
-    const date = new Date(createdAt).toISOString().split('T')[0];
-    let mdContent = `## ${date}\n\n${content}\n\n`;
-    if (attachmentUrls.length > 0) {
-      for (const url of attachmentUrls) {
-        mdContent += `<a href="${url}" target="_blank"><img src="${url}" /></a>\n\n`;
-      }
-    }
-    return mdContent;
-  }
-
-  renderUpdateBuildLog(
-    createdAt: number,
-    projectTitle: string,
-    projectSlug: string,
-    content: string,
-    attachmentUrls: string[]
-  ): string {
-    const date = new Date(createdAt).toISOString().split('T')[0];
-    let mdContent = `## ${date} - [${projectTitle}](/projects/${projectSlug})\n\n${content}\n\n`;
-    if (attachmentUrls.length > 0) {
-      for (const url of attachmentUrls) {
-        mdContent += `<a href="${url}" target="_blank"><img class="attachment-thumb" src="${url}" /></a>\n\n`;
-      }
-    }
-    return mdContent;
-  }
+  return mdContent;
 }
 
 class Builder {
-  constructor(
-    private renderer: Renderer,
-    readonly buildDir: string,
-    readonly sourceDir: string,
-    readonly staticDirs: string[],
-    private buildId: string
-  ) {}
+  constructor(private config: BuildConfig) {}
 
   async buildWebsite(): Promise<void> {
-    await rm(this.buildDir, { recursive: true, force: true });
+    await rm(this.config.buildDir, { recursive: true, force: true });
     await this.copyStaticFiles();
     await this.buildPages();
     await this.buildProjectPages();
@@ -123,21 +98,21 @@ class Builder {
   }
 
   private async copyStaticFiles(): Promise<void> {
-    for (const staticDir of this.staticDirs) {
+    for (const staticDir of this.config.staticDirs) {
       await cp(
-        join(this.sourceDir, staticDir),
-        join(this.buildDir, staticDir),
+        join(this.config.sourceDir, staticDir),
+        join(this.config.buildDir, staticDir),
         { recursive: true }
       );
     }
 
-    const cssDir = join(this.buildDir, 'css');
+    const cssDir = join(this.config.buildDir, 'css');
     const files = await readdir(cssDir);
     for (const filename of files) {
       if (filename.endsWith('.css') || filename.endsWith('.js')) {
         const ext = extname(filename);
         const name = basename(filename, ext);
-        const newFilename = `${name}.${this.buildId}${ext}`;
+        const newFilename = `${name}.${this.config.buildId}${ext}`;
         await rename(
           join(cssDir, filename),
           join(cssDir, newFilename)
@@ -153,7 +128,7 @@ class Builder {
 
     for (const page of pages) {
       console.log(`Rendering page: ${page.slug}`);
-      const html = this.renderer.renderMarkdown(page.content);
+      const html = this.renderMarkdown(page.content);
       await this.saveHtml(page.slug, html);
     }
   }
@@ -177,14 +152,15 @@ class Builder {
 
       for (const update of sortedUpdates) {
         const attachmentUrls = (update.attachments || []).map(a => a.url);
-        mdContent += this.renderer.renderUpdateProject(
-          update.createdAt,
+        const date = new Date(update.createdAt).toISOString().split('T')[0];
+        mdContent += renderUpdate(
+          `## ${date}`,
           update.content,
-          attachmentUrls
+          attachmentUrls,
         );
       }
 
-      const html = this.renderer.renderMarkdown(mdContent);
+      const html = this.renderMarkdown(mdContent);
       await this.saveHtml(project.slug, html, 'projects');
     }
   }
@@ -202,7 +178,7 @@ class Builder {
     });
 
     const mdContent = `# Projects\n\n${projectLinks.join('')}`;
-    const html = this.renderer.renderMarkdown(mdContent);
+    const html = this.renderMarkdown(mdContent);
     await this.saveHtml('index', html, 'projects');
   }
 
@@ -222,21 +198,29 @@ class Builder {
       }
 
       const attachmentUrls = (update.attachments || []).map(a => a.url);
-      mdContent += this.renderer.renderUpdateBuildLog(
-        update.createdAt,
-        update.project.title,
-        update.project.slug,
+      const date = new Date(update.createdAt).toISOString().split('T')[0];
+      mdContent += renderUpdate(
+        `## ${date} - [${update.project.title}](/projects/${update.project.slug})`,
         update.content,
-        attachmentUrls
+        attachmentUrls,
+        'attachment-thumb',
       );
     }
 
-    const html = this.renderer.renderMarkdown(mdContent);
+    const html = this.renderMarkdown(mdContent);
     await this.saveHtml('index', html, 'build-log');
   }
 
+  private renderMarkdown(content: string): string {
+    return renderMarkdown(
+      this.config.layoutTemplate,
+      this.config.buildId,
+      content,
+    );
+  }
+
   private async saveHtml(slug: string, html: string, subdirectory = ''): Promise<void> {
-    const dir = join(this.buildDir, subdirectory);
+    const dir = join(this.config.buildDir, subdirectory);
     await mkdir(dir, { recursive: true });
     const htmlPath = join(dir, `${slug}.html`);
     await writeFile(htmlPath, html);
@@ -283,7 +267,13 @@ async function serveWebsite(port: number): Promise<void> {
   });
 }
 
-async function watchFiles(builder: Builder): Promise<void> {
+async function createBuilder(paths: BuildPaths): Promise<Builder> {
+  const buildId = randomBytes(4).toString('hex');
+  const layoutTemplate = await loadLayoutTemplate();
+  return new Builder({ ...paths, buildId, layoutTemplate });
+}
+
+async function watchFiles(paths: BuildPaths): Promise<void> {
   console.log('Started watching for file changes...');
 
   let buildTimeout: NodeJS.Timeout | null = null;
@@ -295,16 +285,7 @@ async function watchFiles(builder: Builder): Promise<void> {
 
     buildTimeout = setTimeout(async () => {
       console.log('Rebuilding website...');
-      const buildId = randomBytes(4).toString('hex');
-      const layoutTemplate = await loadLayoutTemplate();
-      const renderer = new Renderer(layoutTemplate, buildId);
-      const newBuilder = new Builder(
-        renderer,
-        builder.buildDir,
-        builder.sourceDir,
-        builder.staticDirs,
-        buildId
-      );
+      const newBuilder = await createBuilder(paths);
       await newBuilder.buildWebsite();
       console.log('Rebuild complete.');
     }, 100);
@@ -331,16 +312,18 @@ program.parse();
 const options = program.opts();
 
 async function main() {
-  const buildId = randomBytes(4).toString('hex');
-  const layoutTemplate = await loadLayoutTemplate();
-  const renderer = new Renderer(layoutTemplate, buildId);
-  const builder = new Builder(renderer, BUILD_DIR, SOURCE_DIR, STATIC_DIRS, buildId);
+  const paths = {
+    buildDir: BUILD_DIR,
+    sourceDir: SOURCE_DIR,
+    staticDirs: STATIC_DIRS,
+  };
+  const builder = await createBuilder(paths);
 
   await builder.buildWebsite();
 
   if (options.dev) {
     console.log('Development mode enabled. Watching for changes...');
-    watchFiles(builder);
+    watchFiles(paths);
   }
 
   if (options.dev || options.serve) {
