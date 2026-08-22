@@ -14,7 +14,7 @@ See https://cosmith.fr/projects/this-website for more info!
 
 1. **Build the Website**
 
-    Run the build script to render content from InstantDB, apply the layout template, and copy static assets to the `build` directory.
+    Run the build script to render content from `data/content.sqlite3`, apply the layout template, and copy static assets to the `build` directory.
 
     ```
     npm run build
@@ -42,10 +42,4 @@ See https://cosmith.fr/projects/this-website for more info!
     npm run dev
     ```
 
-4. **Content-triggered Deploys**
-
-    Cloudflare Pages deploys can be triggered whenever InstantDB content changes. The setup script creates or reuses a Cloudflare Pages deploy hook for `main`, then registers an InstantDB webhook for `pages`, `projects`, `updates`, and `attachments`.
-
-    ```
-    npm run setup:content-deploy-hook
-    ```
+Content changes are deployed with the rest of the repository by committing the updated SQLite database.

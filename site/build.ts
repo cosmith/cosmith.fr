@@ -7,7 +7,7 @@ import { join, dirname, extname, basename } from 'path';
 import { fileURLToPath } from 'url';
 import { randomBytes } from 'crypto';
 import { spawnSync } from 'child_process';
-import db from '../src/admin-db.js';
+import { ContentStore } from '../src/content-store.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -19,6 +19,8 @@ const STATIC_DIRS = ['css', 'img'];
 const PROJECT_DIR = dirname(ROOT_DIR);
 const VENV_PYTHON = join(PROJECT_DIR, '.venv', 'bin', 'python');
 const PYTHON = existsSync(VENV_PYTHON) ? VENV_PYTHON : 'python3';
+const DATABASE_PATH = join(PROJECT_DIR, 'data', 'content.sqlite3');
+const contentStore = new ContentStore(DATABASE_PATH);
 
 type BuildPaths = {
   buildDir: string;
@@ -122,9 +124,7 @@ class Builder {
   }
 
   private async buildPages(): Promise<void> {
-    const { pages } = await db.query({
-      pages: {}
-    });
+    const pages = contentStore.listPages();
 
     for (const page of pages) {
       console.log(`Rendering page: ${page.slug}`);
@@ -134,27 +134,17 @@ class Builder {
   }
 
   private async buildProjectPages(): Promise<void> {
-    const { projects } = await db.query({
-      projects: {
-        updates: {
-          attachments: {}
-        }
-      }
-    });
+    const projects = contentStore.listProjectsWithUpdates();
 
     for (const project of projects) {
       console.log(`Rendering project: ${project.slug}`);
       let mdContent = `# ${project.title}\n\n`;
       mdContent += `<img class="project-cover" src="${project.image}" />\n\n${project.description}\n`;
 
-      const sortedUpdates = [...(project.updates || [])]
-        .sort((a, b) => a.createdAt - b.createdAt);
-
-      for (const update of sortedUpdates) {
-        const attachmentUrls = (update.attachments || []).map(a => a.url);
-        const date = new Date(update.createdAt).toISOString().split('T')[0];
+      for (const update of project.updates) {
+        const attachmentUrls = update.attachments.map(a => a.url);
         mdContent += renderUpdate(
-          `## ${date}`,
+          `## ${update.createdAt}`,
           update.content,
           attachmentUrls,
         );
@@ -166,14 +156,8 @@ class Builder {
   }
 
   private async buildProjectIndex(): Promise<void> {
-    const { projects } = await db.query({
-      projects: {}
-    });
-
-    const sortedProjects = [...projects]
-      .sort((a, b) => b.createdAt - a.createdAt);
-
-    const projectLinks = sortedProjects.map(project => {
+    const projects = contentStore.listProjects();
+    const projectLinks = projects.map(project => {
       return `## [${project.title}](/projects/${project.slug})\n\n<a href="/projects/${project.slug}"><img class="project-cover" src="${project.image}"/></a>\n`;
     });
 
@@ -183,24 +167,13 @@ class Builder {
   }
 
   private async buildBuildLog(): Promise<void> {
-    const { updates } = await db.query({
-      updates: {
-        project: {},
-        attachments: {},
-        $: { limit: 20, order: { createdAt: 'desc' } }
-      }
-    });
+    const updates = contentStore.listRecentUpdates(20);
 
     let mdContent = '# Build log\n\n';
     for (const update of updates) {
-      if (!update.project) {
-        throw new Error(`Update ${update.id} is missing a project link`);
-      }
-
-      const attachmentUrls = (update.attachments || []).map(a => a.url);
-      const date = new Date(update.createdAt).toISOString().split('T')[0];
+      const attachmentUrls = update.attachments.map(a => a.url);
       mdContent += renderUpdate(
-        `## ${date} - [${update.project.title}](/projects/${update.project.slug})`,
+        `## ${update.createdAt} - [${update.project.title}](/projects/${update.project.slug})`,
         update.content,
         attachmentUrls,
         'attachment-thumb',
@@ -291,7 +264,7 @@ async function watchFiles(paths: BuildPaths): Promise<void> {
     }, 100);
   };
 
-  const watcher = watch([SOURCE_DIR], {
+  const watcher = watch([SOURCE_DIR, DATABASE_PATH], {
     persistent: true,
     ignoreInitial: true
   });
